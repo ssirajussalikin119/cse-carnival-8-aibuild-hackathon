@@ -6,12 +6,14 @@ import { useAssignments } from '../hooks/useAssignments';
 import StatsCard from '../components/overview/StatsCard';
 import UpcomingItem from '../components/overview/UpcomingItem';
 import QuickActions from '../components/overview/QuickActions';
+import { motion } from 'framer-motion';
 import { 
   Calendar, 
   DoorOpen, 
   CalendarDays, 
   Megaphone, 
-  ClipboardList
+  ClipboardList,
+  Sparkles
 } from 'lucide-react';
 
 export default function OverviewPage() {
@@ -33,7 +35,7 @@ export default function OverviewPage() {
   const pendingAssignments = assignments.filter(a => a.status === 'pending').length;
   const highPriorityAnnouncements = announcements.filter(a => a.priority === 'high').length;
 
-  // Get upcoming items (next 3 in each category)
+  // Get upcoming items
   const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
   
   const upcomingSchedules = schedules
@@ -53,10 +55,20 @@ export default function OverviewPage() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-white">Overview</h1>
-        <p className="text-gray-400 text-sm">CampusOS command center</p>
-      </div>
+      <motion.div 
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-6"
+      >
+        <div className="flex items-center gap-3">
+          <h1 className="text-2xl font-bold text-white">Overview</h1>
+          <div className="px-3 py-1 rounded-full glass border border-white/5 text-xs text-accent-light flex items-center gap-1.5">
+            <Sparkles size={12} />
+            <span>Live</span>
+          </div>
+        </div>
+        <p className="text-gray-400 text-sm mt-1">Welcome back to your CampusOS command center</p>
+      </motion.div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
@@ -64,35 +76,40 @@ export default function OverviewPage() {
           title="Schedules" 
           value={totalSchedules} 
           icon={Calendar}
-          color="bg-blue-500/20"
+          color="blue"
+          delay={0}
         />
         <StatsCard 
           title="Rooms" 
           value={`${availableRooms}/${totalRooms}`} 
           icon={DoorOpen}
-          color="bg-purple-500/20"
+          color="purple"
           subtitle={`${availableRooms} available`}
+          delay={0.1}
         />
         <StatsCard 
           title="Events" 
           value={totalEvents} 
           icon={CalendarDays}
-          color="bg-green-500/20"
+          color="green"
           subtitle={`${upcomingEvents} upcoming`}
+          delay={0.2}
         />
         <StatsCard 
           title="Announcements" 
           value={totalAnnouncements} 
           icon={Megaphone}
-          color="bg-orange-500/20"
+          color="orange"
           subtitle={`${highPriorityAnnouncements} high priority`}
+          delay={0.3}
         />
         <StatsCard 
           title="Assignments" 
           value={totalAssignments} 
           icon={ClipboardList}
-          color="bg-yellow-500/20"
+          color="yellow"
           subtitle={`${pendingAssignments} pending`}
+          delay={0.4}
         />
       </div>
 
@@ -103,18 +120,26 @@ export default function OverviewPage() {
 
       {/* Upcoming Items */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-[#0d0d14] border border-white/5 rounded-xl p-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="glass rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all"
+        >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Today's Schedule</h3>
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <Calendar size={16} className="text-blue-400" />
+              Today's Schedule
+            </h3>
             <button 
               onClick={() => window.location.href = '/schedule'}
-              className="text-xs text-accent hover:text-accent/80 transition-colors"
+              className="text-xs text-accent hover:text-accent-light transition-colors"
             >
-              View all
+              View all →
             </button>
           </div>
           {upcomingSchedules.length === 0 ? (
-            <p className="text-sm text-gray-500">No classes today</p>
+            <p className="text-sm text-gray-500">No classes today 🎉</p>
           ) : (
             <div className="space-y-2">
               {upcomingSchedules.map((schedule) => (
@@ -131,16 +156,24 @@ export default function OverviewPage() {
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="bg-[#0d0d14] border border-white/5 rounded-xl p-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="glass rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all"
+        >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Upcoming Events</h3>
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <CalendarDays size={16} className="text-green-400" />
+              Upcoming Events
+            </h3>
             <button 
               onClick={() => window.location.href = '/events'}
-              className="text-xs text-accent hover:text-accent/80 transition-colors"
+              className="text-xs text-accent hover:text-accent-light transition-colors"
             >
-              View all
+              View all →
             </button>
           </div>
           {upcomingEventsList.length === 0 ? (
@@ -161,20 +194,28 @@ export default function OverviewPage() {
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="bg-[#0d0d14] border border-white/5 rounded-xl p-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="glass rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all"
+        >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Pending Assignments</h3>
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <ClipboardList size={16} className="text-yellow-400" />
+              Pending Assignments
+            </h3>
             <button 
               onClick={() => window.location.href = '/assignments'}
-              className="text-xs text-accent hover:text-accent/80 transition-colors"
+              className="text-xs text-accent hover:text-accent-light transition-colors"
             >
-              View all
+              View all →
             </button>
           </div>
           {pendingAssignmentsList.length === 0 ? (
-            <p className="text-sm text-gray-500">No pending assignments</p>
+            <p className="text-sm text-gray-500">No pending assignments 🎉</p>
           ) : (
             <div className="space-y-2">
               {pendingAssignmentsList.map((assignment) => (
@@ -190,16 +231,24 @@ export default function OverviewPage() {
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
 
-        <div className="bg-[#0d0d14] border border-white/5 rounded-xl p-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+          className="glass rounded-xl p-5 border border-white/5 hover:border-white/10 transition-all"
+        >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-medium text-white">Recent Announcements</h3>
+            <h3 className="text-sm font-medium text-white flex items-center gap-2">
+              <Megaphone size={16} className="text-orange-400" />
+              Recent Announcements
+            </h3>
             <button 
               onClick={() => window.location.href = '/announcements'}
-              className="text-xs text-accent hover:text-accent/80 transition-colors"
+              className="text-xs text-accent hover:text-accent-light transition-colors"
             >
-              View all
+              View all →
             </button>
           </div>
           {recentAnnouncements.length === 0 ? (
@@ -219,7 +268,7 @@ export default function OverviewPage() {
               ))}
             </div>
           )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

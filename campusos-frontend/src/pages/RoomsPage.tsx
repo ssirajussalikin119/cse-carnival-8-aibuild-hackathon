@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useRooms } from '../hooks/useRooms';
 import RoomCard from '../components/rooms/RoomCard';
 import RoomModal from '../components/rooms/RoomModal';
 import BookingModal from '../components/rooms/BookingModal';
 import DeleteConfirmModal from '../components/rooms/DeleteConfirmModal';
+import PageHeader from '../components/common/PageHeader';
 import type { Room } from '../types/room';
 
 export default function RoomsPage() {
@@ -60,42 +62,56 @@ export default function RoomsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Rooms</h1>
-          <p className="text-gray-400 text-sm">Manage campus rooms and bookings</p>
-        </div>
-        <button
-          onClick={handleAddRoom}
-          className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg transition-colors font-medium text-sm"
-        >
-          <Plus size={18} />
-          Add Room
-        </button>
-      </div>
+      <PageHeader 
+        title="Rooms" 
+        subtitle="Manage campus rooms and bookings"
+        icon="🚪"
+        action={
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleAddRoom}
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-custom text-white rounded-xl font-medium text-sm shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all"
+          >
+            <Plus size={18} />
+            Add Room
+          </motion.button>
+        }
+      />
 
       {loading && rooms.length === 0 ? (
         <div className="flex items-center justify-center h-64">
           <div className="text-gray-400">Loading rooms...</div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {rooms.map((room) => (
-            <RoomCard
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"
+        >
+          {rooms.map((room, index) => (
+            <motion.div
               key={room.id}
-              room={room}
-              onEdit={handleEditRoom}
-              onDelete={(id) => setDeletingId(id)}
-              onBook={handleBookRoom}
-              onCancelBooking={cancelBooking}
-            />
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <RoomCard
+                room={room}
+                onEdit={handleEditRoom}
+                onDelete={(id) => setDeletingId(id)}
+                onBook={handleBookRoom}
+                onCancelBooking={cancelBooking}
+              />
+            </motion.div>
           ))}
           {rooms.length === 0 && (
             <div className="col-span-full text-center py-12 text-gray-500">
               No rooms found. Add one to get started.
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       <RoomModal
