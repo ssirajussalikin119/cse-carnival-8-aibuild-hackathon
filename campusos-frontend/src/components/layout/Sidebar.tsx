@@ -6,7 +6,9 @@ import {
   CalendarDays, 
   Megaphone, 
   ClipboardList, 
-  Bot 
+  Bot,
+  Sparkles,
+  Activity
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -28,66 +30,84 @@ interface SidebarProps {
 export default function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
   const sidebarContent = (
     <>
-      <div className="flex items-center gap-2 px-4 py-6 border-b border-white/5">
-        <div className="w-8 h-8 rounded bg-accent/20 flex items-center justify-center">
-          <span className="text-accent font-bold text-sm">C</span>
+      <div className="flex items-center gap-3 px-5 py-7 border-b border-white/5">
+        <motion.div 
+          className="w-10 h-10 rounded-xl bg-gradient-custom flex items-center justify-center glow-accent-sm"
+          whileHover={{ scale: 1.05, rotate: -3 }}
+          transition={{ duration: 0.2 }}
+        >
+          <Sparkles size={20} className="text-white" />
+        </motion.div>
+        <div>
+          <span className="text-lg font-bold text-white">Campus<span className="text-accent">OS</span></span>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <Activity size={10} className="text-green-400 animate-pulse" />
+            <span className="text-[10px] text-gray-500 tracking-wider uppercase">Command Center</span>
+          </div>
         </div>
-        <span className="text-lg font-semibold text-white tracking-tight">CampusOS</span>
       </div>
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-5 space-y-1">
         {navigation.map((item) => (
           <NavLink
             key={item.path}
             to={item.path}
             onClick={onMobileClose}
             className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              `relative flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
                 isActive
-                  ? 'bg-accent/10 text-accent'
+                  ? 'bg-accent/10 text-accent-light shadow-lg shadow-accent/5'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               }`
             }
           >
             {({ isActive }) => (
               <>
-                <item.icon size={18} className={isActive ? 'text-accent' : ''} />
-                <span>{item.label}</span>
                 {isActive && (
                   <motion.div
                     layoutId="activeNav"
-                    className="ml-auto w-1 h-6 rounded-full bg-accent"
-                    transition={{ duration: 0.2 }}
+                    className="absolute left-0 w-1 h-8 rounded-r-full bg-gradient-custom glow-accent-sm"
+                    transition={{ duration: 0.25, type: 'spring', stiffness: 400, damping: 30 }}
                   />
+                )}
+                <item.icon size={18} className={isActive ? 'text-accent' : 'opacity-60'} />
+                <span className={isActive ? 'text-white' : ''}>{item.label}</span>
+                {isActive && (
+                  <span className="ml-auto w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
                 )}
               </>
             )}
           </NavLink>
         ))}
       </nav>
+      <div className="p-4 border-t border-white/5">
+        <div className="flex items-center justify-center gap-2 text-[10px] text-gray-600">
+          <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+          <span>System Online</span>
+          <span className="mx-1">•</span>
+          <span>v2.0</span>
+        </div>
+      </div>
     </>
   );
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:flex md:w-64 lg:w-72 flex-col fixed inset-y-0 left-0 bg-[#0d0d14] border-r border-white/5">
+      <aside className="hidden md:flex md:w-[280px] flex-col fixed inset-y-0 left-0 glass border-r border-white/10">
         {sidebarContent}
       </aside>
 
-      {/* Mobile Sidebar Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
           onClick={onMobileClose}
         />
       )}
 
-      {/* Mobile Sidebar */}
       <motion.aside
-        initial={{ x: -280 }}
-        animate={{ x: isMobileOpen ? 0 : -280 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
-        className="fixed top-0 left-0 w-72 h-full bg-[#0d0d14] border-r border-white/5 z-50 md:hidden"
+        initial={{ x: -300 }}
+        animate={{ x: isMobileOpen ? 0 : -300 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="fixed top-0 left-0 w-[280px] h-full glass border-r border-white/10 z-50 md:hidden"
       >
         {sidebarContent}
       </motion.aside>

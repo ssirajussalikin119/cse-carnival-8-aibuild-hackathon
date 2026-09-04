@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useAnnouncements } from '../hooks/useAnnouncements';
 import AnnouncementCard from '../components/announcements/AnnouncementCard';
 import AnnouncementModal from '../components/announcements/AnnouncementModal';
 import DeleteConfirmModal from '../components/announcements/DeleteConfirmModal';
+import PageHeader from '../components/common/PageHeader';
 import type { Announcement } from '../types/announcement';
 
 export default function AnnouncementsPage() {
@@ -48,40 +50,54 @@ export default function AnnouncementsPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-semibold text-white">Announcements</h1>
-          <p className="text-gray-400 text-sm">View campus announcements</p>
-        </div>
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent/80 text-white rounded-lg transition-colors font-medium text-sm"
-        >
-          <Plus size={18} />
-          Add Announcement
-        </button>
-      </div>
+      <PageHeader 
+        title="Announcements" 
+        subtitle="View campus announcements"
+        icon="📢"
+        action={
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleAdd}
+            className="flex items-center gap-2 px-5 py-2.5 bg-gradient-custom text-white rounded-xl font-medium text-sm shadow-lg shadow-accent/20 hover:shadow-accent/30 transition-all"
+          >
+            <Plus size={18} />
+            Add Announcement
+          </motion.button>
+        }
+      />
 
       {loading && announcements.length === 0 ? (
         <div className="flex items-center justify-center h-64">
           <div className="text-gray-400">Loading announcements...</div>
         </div>
       ) : (
-        <div className="space-y-3">
-          {announcements.map((announcement) => (
-            <AnnouncementCard
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-3"
+        >
+          {announcements.map((announcement, index) => (
+            <motion.div
               key={announcement.id}
-              announcement={announcement}
-              onEdit={handleEdit}
-              onDelete={(id) => setDeletingId(id)}
-            />
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+            >
+              <AnnouncementCard
+                announcement={announcement}
+                onEdit={handleEdit}
+                onDelete={(id) => setDeletingId(id)}
+              />
+            </motion.div>
           ))}
           {announcements.length === 0 && (
             <div className="text-center py-12 text-gray-500">
               No announcements found. Add one to get started.
             </div>
           )}
-        </div>
+        </motion.div>
       )}
 
       <AnnouncementModal
